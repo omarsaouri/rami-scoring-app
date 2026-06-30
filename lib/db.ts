@@ -159,6 +159,14 @@ export function getDB(): SQLite.SQLiteDatabase {
   return db;
 }
 
+function triggerSync(): void {
+  // Dynamic import avoids a circular dependency: sync.ts imports getDB from
+  // this file, so this file cannot statically import sync.ts.
+  import('./sync')
+    .then((m) => m.syncPending())
+    .catch((e) => console.warn('[sync] trigger failed', e));
+}
+
 export async function createPlayer(name: string): Promise<Player> {
   const d = getDB();
   const player: Player = {
@@ -171,6 +179,7 @@ export async function createPlayer(name: string): Promise<Player> {
     'INSERT INTO players (id, name, avatar, created_at) VALUES (?, ?, ?, ?)',
     [player.id, player.name, player.avatar, player.created_at]
   );
+  triggerSync();
   return player;
 }
 
@@ -230,6 +239,7 @@ export async function createGame(params: CreateGameParams): Promise<GameWithPlay
     });
   }
 
+  triggerSync();
   return {
     id: gameId,
     status: 'active',
@@ -382,6 +392,7 @@ export async function addRound(
     );
   }
 
+  triggerSync();
   return { id: roundId, game_id: gameId, round_number: roundNumber, winner_id: winnerId, joker_color: jokerColor, created_at: now };
 }
 
@@ -425,15 +436,17 @@ export async function getRounds(gameId: string): Promise<RoundWithScores[]> {
 export async function completeGame(gameId: string, winnerId: string): Promise<void> {
   const d = getDB();
   await d.runAsync(
-    "UPDATE games SET status = 'completed', completed_at = ?, winner_id = ? WHERE id = ?",
+    "UPDATE games SET status = 'completed', completed_at = ?, winner_id = ?, synced_at = NULL WHERE id = ?",
     [Date.now(), winnerId, gameId]
   );
+  triggerSync();
 }
 
 export async function abandonGame(gameId: string): Promise<void> {
   const d = getDB();
   await d.runAsync(
-    "UPDATE games SET status = 'abandoned' WHERE id = ?",
+    "UPDATE games SET status = 'abandoned', synced_at = NULL WHERE id = ?",
     [gameId]
   );
+  triggerSync();
 }
