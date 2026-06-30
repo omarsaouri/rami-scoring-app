@@ -129,6 +129,10 @@ Joker in a combination = 0 points toward the 71 threshold. Joker penalty in hand
 - Can you swap a natural card for an opponent's joker in their laid combination?
 - As = 10 always confirmed, but some tables say As = 1 before the 2. Support as toggle?
 
+## Git Commit Conventions
+
+- Never add a `Co-Authored-By: Claude` (or any AI/assistant) trailer to a commit message, and never list Claude as a commit author or contributor. Commits are authored by the human user only.
+
 ## Coding Conventions
 
 - Components: PascalCase (`Scoreboard.tsx`)
