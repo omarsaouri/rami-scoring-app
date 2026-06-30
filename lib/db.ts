@@ -137,9 +137,24 @@ export async function initDB(): Promise<void> {
       ['schema_version', '1']
     );
   }
+
+  if (currentVersion < 2) {
+    await db.execAsync(`
+      ALTER TABLE players ADD COLUMN synced_at INTEGER;
+      ALTER TABLE games ADD COLUMN synced_at INTEGER;
+      ALTER TABLE game_players ADD COLUMN synced_at INTEGER;
+      ALTER TABLE rounds ADD COLUMN synced_at INTEGER;
+      ALTER TABLE round_scores ADD COLUMN synced_at INTEGER;
+    `);
+
+    await db.runAsync(
+      'INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)',
+      ['schema_version', '2']
+    );
+  }
 }
 
-function getDB(): SQLite.SQLiteDatabase {
+export function getDB(): SQLite.SQLiteDatabase {
   if (!db) throw new Error('DB not initialized — call initDB() first');
   return db;
 }
