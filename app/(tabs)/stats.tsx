@@ -1,13 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-
-const C = {
-  bg: '#0A0A0A',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  primary: '#10B981',
-};
+import { Colors as C } from '@/constants/theme';
 
 export default function StatsScreen() {
   const { t } = useTranslation();

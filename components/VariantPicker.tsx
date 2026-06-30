@@ -3,15 +3,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import type { GameVariant } from '@/lib/db';
 import { VARIANTS } from '@/lib/rules';
-
-const C = {
-  bg: '#0A0A0A',
-  surface: '#111827',
-  border: '#1F2937',
-  primary: '#10B981',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-};
+import { Colors as C } from '@/constants/theme';
 
 interface Props {
   selected: GameVariant;

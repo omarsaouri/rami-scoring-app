@@ -8,18 +8,9 @@ import {
   Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Colors } from '@/constants/theme';
 
-const C = {
-  bg: '#0A0A0A',
-  surface: '#111827',
-  surface2: '#1F2937',
-  border: '#374151',
-  primary: '#10B981',
-  primaryDim: '#065F46',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  danger: '#EF4444',
-};
+const C = { ...Colors, border: Colors.borderLight };
 
 const QUICK_VALUES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 

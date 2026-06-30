@@ -12,22 +12,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { listGames } from '@/lib/db';
 import type { GameWithPlayers } from '@/lib/db';
-
-const C = {
-  bg: '#0A0A0A',
-  surface: '#111827',
-  border: '#1F2937',
-  primary: '#10B981',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  danger: '#EF4444',
-};
-
-const VARIANT_LABELS: Record<string, string> = {
-  simple: 'Simple',
-  '71': '71',
-  '71_bla_joker': '71 Bla Joker',
-};
+import { Colors as C } from '@/constants/theme';
+import { VARIANT_LABELS } from '@/lib/rules';
 
 function formatDate(ts: number): string {
   return new Date(ts).toLocaleDateString(undefined, {

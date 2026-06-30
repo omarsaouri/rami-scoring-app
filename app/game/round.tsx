@@ -20,17 +20,7 @@ import { DEFAULT_RULES } from '@/lib/rules';
 import { useGameStore } from '@/store/gameStore';
 import type { GameWithPlayers } from '@/lib/db';
 import type { TeamConfig } from '@/lib/scoring';
-
-const C = {
-  bg: '#0A0A0A',
-  surface: '#111827',
-  border: '#1F2937',
-  primary: '#10B981',
-  primaryDim: '#065F46',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  danger: '#EF4444',
-};
+import { Colors as C } from '@/constants/theme';
 
 interface PlayerState {
   playerId: string;

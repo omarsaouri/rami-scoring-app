@@ -41,6 +41,10 @@ export const VARIANTS: VariantDef[] = [
   },
 ];
 
+export const VARIANT_LABELS: Record<GameVariant, string> = Object.fromEntries(
+  VARIANTS.map((v) => [v.id, v.label])
+) as Record<GameVariant, string>;
+
 const FACE_CARD_NAMES = ['Valet', 'Dame', 'Roi', 'J', 'Q', 'K'];
 const ACE_NAMES = ['As', 'A', 'Ace'];
 

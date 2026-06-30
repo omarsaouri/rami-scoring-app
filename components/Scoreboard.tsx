@@ -8,18 +8,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { GamePlayer, RoundWithScores } from '@/lib/db';
 import { buildCumulativeScores } from '@/lib/scoring';
+import { Colors } from '@/constants/theme';
 
-const C = {
-  bg: '#0A0A0A',
-  surface: '#111827',
-  border: '#1F2937',
-  primary: '#10B981',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  win: '#10B981',
-  danger: '#EF4444',
-  warning: '#F59E0B',
-};
+const C = { ...Colors, win: Colors.primary };
 
 const COL_WIDTH = 72;
 const LABEL_WIDTH = 70;

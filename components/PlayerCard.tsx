@@ -1,14 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-const C = {
-  surface: '#111827',
-  border: '#1F2937',
-  primary: '#10B981',
-  text: '#F9FAFB',
-  textMuted: '#6B7280',
-  danger: '#EF4444',
-};
+import { Colors as C } from '@/constants/theme';
 
 const AVATAR_COLORS = [
   '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B',
