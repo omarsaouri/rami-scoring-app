@@ -2,9 +2,11 @@ import { getDB } from './db';
 import { supabase } from './supabase';
 
 let cachedUserId: string | null = null;
+let sessionPromise: Promise<string> | null = null;
 
-export async function ensureSession(): Promise<string> {
+async function doEnsureSession(): Promise<string> {
   if (cachedUserId) return cachedUserId;
+  if (!supabase) throw new Error('Supabase client not configured');
 
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
@@ -18,6 +20,20 @@ export async function ensureSession(): Promise<string> {
   }
   cachedUserId = data.user.id;
   return cachedUserId;
+}
+
+// Memoize the in-flight promise (not just the resolved id) so concurrent
+// callers on first launch share one sign-in attempt instead of each minting
+// their own anonymous user. Reset on failure so a transient error (e.g.
+// offline at boot) doesn't permanently poison retries.
+export function ensureSession(): Promise<string> {
+  if (!sessionPromise) {
+    sessionPromise = doEnsureSession().catch((e) => {
+      sessionPromise = null;
+      throw e;
+    });
+  }
+  return sessionPromise;
 }
 
 interface SyncTable {
@@ -91,6 +107,8 @@ const TABLES: SyncTable[] = [
 ];
 
 export async function syncPending(): Promise<void> {
+  if (!supabase) return;
+
   let userId: string;
   try {
     userId = await ensureSession();
