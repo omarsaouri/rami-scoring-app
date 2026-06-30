@@ -1,6 +1,6 @@
 # Architecture
 
-Rami Score is a mobile scorekeeping app for Moroccan Rummy (Rami Marocain). It does not play cards for you or enforce table rules during a hand; it replaces the paper notepad people use at the table to track who's winning across the three local variants: Simple, 71 (Tallage), and 71 Bla Joker. Everything runs offline on the phone. There is no account and no server.
+Rami Score is a mobile scorekeeping app for Moroccan Rummy (Rami Marocain). It does not play cards for you or enforce table rules during a hand; it replaces the paper notepad people use at the table to track who's winning across the three local variants: Simple, 71 (Tallage), and 71 Bla Joker. Everything runs offline on the phone first. A background sync also pushes a copy of game data to Supabase for backup, but there is still no sign-up or login screen: the app talks to Supabase under a silent, anonymous identity the player never sees.
 
 For game rules and open rule questions, see [RULES.md](RULES.md). For visual direction, see [DESIGN.md](DESIGN.md). For build and deploy steps, see [SETUP.md](SETUP.md). For build status and what's planned next, see [PROGRESS.md](PROGRESS.md). This document only covers how the code is organized and how it works today.
 
@@ -36,6 +36,8 @@ flowchart TD
 
     Store["store/gameStore.ts\nactive game, in memory only"]
     DB[("lib/db.ts → expo-sqlite\nsource of truth for all game state")]
+    Sync["lib/sync.ts\npush-only backup"]
+    Supa[("Supabase\nRLS-scoped mirror, anonymous identity")]
 
     subgraph Logic["lib/scoring.ts + lib/rules.ts"]
         Pure["Pure functions: no I/O, no React"]
@@ -46,9 +48,13 @@ flowchart TD
     DB -- "active game synced into" --> Store
     Tabs -- "read" --> Store
     UI -- "round totals, thresholds" --> Pure
+    DB -- "unsynced rows" --> Sync
+    Sync -- "push only" --> Supa
 ```
 
 SQLite is the only persistent store and the only source of truth. The Zustand store is a read cache for whichever game is currently active, refreshed from SQLite on app launch and after every write; it holds no logic of its own. `lib/scoring.ts` and `lib/rules.ts` are plain TypeScript with no React or SQLite imports, so the scoring math can be unit tested without rendering a screen.
+
+Writes still land in SQLite first, so the app reads and writes locally with no wait on the network. After a write, and again on every app launch, `lib/sync.ts` looks for rows with `synced_at IS NULL` across `players`, `games`, `game_players`, `rounds`, and `round_scores`, and pushes them to Supabase under a silent anonymous Supabase auth session (`lib/supabase.ts`), one created automatically on first launch and never shown to the player. Row-level security scopes every table to that session's `user_id`, so one device's data can't be read or written by another identity. Sync is push-only in this version: nothing is ever pulled back down from Supabase, so the local database can't be repopulated from the cloud copy yet.
 
 One thing the diagram doesn't show: the app records *inputs* (who posed, who won, how many points were left in hand) rather than the cards themselves. It trusts the players to count their own hands correctly. There's no card-level state anywhere in the schema.
 
