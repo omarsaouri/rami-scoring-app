@@ -16,7 +16,7 @@ Status values used below: **Done**, **In progress**, **Not started**.
 | Settings | Done | Language switcher (fr/en/ar), static card-value/penalty reference |
 | Localization | Done | Darija, French, English across all screens |
 | Persistence (SQLite) | Done | Versioned schema in `lib/db.ts` |
-| Backup sync (Supabase) | Done | Push only. `lib/sync.ts` sends unsynced rows from all 5 local tables (players, games, game_players, rounds, round_scores) to Supabase under a silent anonymous identity, scoped by RLS. Runs after local writes and on app launch. No pull, no restore yet. |
+| Backup sync (Supabase) | Done | Push only. `lib/sync.ts` sends unsynced rows from all 5 local tables (players, games, game_players, rounds, round_scores) to Supabase under a silent anonymous identity, scoped by RLS. Runs after local writes and on app launch. No pull, no restore yet. Verified live against the production Supabase project on 2026-07-01 (migration applied, anonymous sign-ins enabled, sync confirmed with no errors on a clean app boot). |
 | Stats tab | Not started | Placeholder screen only, no win rate or history charts |
 
 ## Known gaps
