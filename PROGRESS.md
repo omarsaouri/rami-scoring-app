@@ -16,6 +16,7 @@ Status values used below: **Done**, **In progress**, **Not started**.
 | Settings | Done | Language switcher (fr/en/ar), static card-value/penalty reference |
 | Localization | Done | Darija, French, English across all screens |
 | Persistence (SQLite) | Done | Versioned schema in `lib/db.ts` |
+| Backup sync (Supabase) | Done | Push only. `lib/sync.ts` sends unsynced rows from all 5 local tables (players, games, game_players, rounds, round_scores) to Supabase under a silent anonymous identity, scoped by RLS. Runs after local writes and on app launch. No pull, no restore yet. |
 | Stats tab | Not started | Placeholder screen only, no win rate or history charts |
 
 ## Known gaps
@@ -33,9 +34,11 @@ These were found during the codebase review and aren't yet scheduled:
 
 1. **Tailwind / NativeWind integration**: replace the current per-file `StyleSheet.create` plus shared `constants/theme.ts` token approach with utility classes. Needs a compatibility check against the installed Expo/React Native/Reanimated versions before starting, since NativeWind ships its own babel and metro config.
 2. **UI and design pass**: revisit DESIGN.md (zellige-inspired accents, typography, iPad/landscape layout) and apply it screen by screen. Update DESIGN.md itself as decisions get made, so it stays a record of what shipped rather than only what was proposed.
-3. **Real database / cloud sync**: move beyond local-only SQLite. SETUP.md already names Supabase for a later phase; this is that phase starting. Needs a decision first: replace SQLite outright, or keep it as an offline cache in front of the cloud store. Offline-first is a stated product principle (see CLAUDE.md), so the second option is the safer default unless told otherwise.
-4. Carry over from "known gaps" above as they get scheduled: round editing/undo, Stats tab, joker-color wiring, `CustomRules` UI.
+3. **Restore from backup**: pull/restore on fresh install, keyed off something like a recovery code since there's no email or Apple ID tying a device to its anonymous Supabase identity.
+4. **Two-way sync**: once restore exists, handle the conflict resolution that comes with syncing in both directions instead of push only.
+5. **Sync status in Settings**: show last synced time and pending row count so backup sync isn't invisible to the player.
+6. Carry over from "known gaps" above as they get scheduled: round editing/undo, Stats tab, joker-color wiring, `CustomRules` UI.
 
 ## How to keep this file useful
 
-Update it in the same change that ships the work, not in a later cleanup pass: move an item from "Now planned" to "Phase 1" (or a new phase section) as soon as it lands, and delete it from "Known gaps" if it closes a gap. When the database work in item 3 ships, ARCHITECTURE.md's data-flow section needs a matching update since "SQLite is the only source of truth" will no longer be true.
+Update it in the same change that ships the work, not in a later cleanup pass: move an item from "Now planned" to "Phase 1" (or a new phase section) as soon as it lands, and delete it from "Known gaps" if it closes a gap. When restore (item 3 above) ships, ARCHITECTURE.md's data-flow section needs a matching update, since SQLite will no longer be the only place game data can come from.

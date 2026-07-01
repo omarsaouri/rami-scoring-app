@@ -142,7 +142,7 @@ Joker in a combination = 0 points toward the 71 threshold. Joker penalty in hand
 - All text visible to users goes through i18n — no hardcoded strings in components
 - SQLite is the source of truth for game state; Zustand mirrors the active game only
 - Offline-first: the app must work fully without network from first launch
-- No sign-up, no auth in MVP
+- No sign-up, no auth in MVP. A silent anonymous Supabase identity exists under the hood for backup sync (`lib/supabase.ts`), created automatically on first launch; there is still no sign-up screen and nothing the user sees or interacts with.
 
 ## Key Commands
 

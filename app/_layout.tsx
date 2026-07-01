@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 
 import { initDB, getActiveGame, getRounds } from '@/lib/db';
+import { syncPending } from '@/lib/sync';
 import '@/lib/i18n';
 import { useGameStore } from '@/store/gameStore';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
           const rounds = await getRounds(game.id);
           setRounds(rounds);
         }
+        syncPending();
       } catch (e) {
         console.error('Init error', e);
       } finally {
